@@ -28,11 +28,19 @@ const randomColor =  () =>{
     return colors[randomIndex]
 }
 
-const processMessage = ({data}) => {
-    const {userID, userName, userColor, content} = JSON.parse(data)
-    const sentMessage = createdMessageSelf(content)
-    if(user.id == sentMessage.id)
-        chat_message.appendChild(sentMessage.div)
+const handLogin = (event) =>{    
+    event.preventDefault()
+
+    user.id = crypto.randomUUID().toString()
+    user.name = nomeLogin.value
+    user.color = randomColor()
+
+    login.style.display = "none"
+    chat.style.display = "flex"
+
+    websocket = new WebSocket('ws://localhost:8085')
+    websocket.onmessage = processMessage
+
 }
 
 const sendMessage = (event) =>{
@@ -49,27 +57,40 @@ const sendMessage = (event) =>{
     mensagemChat.value = ''
 }
 
-const handLogin = (event) =>{    
-    event.preventDefault()
-
-    user.id = crypto.randomUUID()
-    user.name = nomeLogin.value
-    user.color = randomColor()
-
-    login.style.display = "none"
-    chat.style.display = "flex"
-
-    websocket = new WebSocket('ws://localhost:8085')
-    websocket.onmessage = processMessage
+const processMessage = ({data}) => {
+    const {userId, userName, userColor, content} = JSON.parse([data])
+    
+    const mensagem = 
+        userId == user.id 
+        ? createdMessageSelf(content)
+        : createdMessageOther(content,userName,userColor)
+    
+    chat_message.appendChild(mensagem)
 
 }
 
-const createdMessageSelf = (messagecontent,id) => {
+const createdMessageSelf = (messagecontent) => {
     const div = document.createElement('div')
     div.classList.add('message_self')
     div.innerHTML = messagecontent
 
-    return {div,id} 
+    return div
+}
+
+const createdMessageOther = (messagecontent, user, usercolor) => {
+    const div = document.createElement('div')
+    const span = document.createElement('span')
+
+    div.classList.add('message_other')
+    span.classList.add('person_name')
+
+    span.innerHTML = user
+    span.style.color = usercolor
+
+    div.appendChild(span)
+    div.innerHTML += messagecontent
+
+    return div
 }
 
 loginForm.addEventListener("submit", handLogin)
