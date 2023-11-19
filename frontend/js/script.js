@@ -38,7 +38,7 @@ const handLogin = (event) =>{
     login.style.display = "none"
     chat.style.display = "flex"
 
-    websocket = new WebSocket('https://chat-tempo-real-backend.onrender.com')
+    websocket = new WebSocket('wss://chat-tempo-real-backend.onrender.com')
     websocket.onmessage = processMessage
 
 }
