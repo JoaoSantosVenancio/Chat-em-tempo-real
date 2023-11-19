@@ -57,6 +57,14 @@ const sendMessage = (event) =>{
     mensagemChat.value = ''
 }
 
+const scrollScrenn = ()=>{
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+        
+    })
+}
+
 const processMessage = ({data}) => {
     const {userId, userName, userColor, content} = JSON.parse([data])
     
@@ -67,6 +75,7 @@ const processMessage = ({data}) => {
     
     chat_message.appendChild(mensagem)
 
+    scrollScrenn()
 }
 
 const createdMessageSelf = (messagecontent) => {
